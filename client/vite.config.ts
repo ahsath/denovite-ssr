@@ -15,7 +15,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         // Storefront Island Hydrator Client Entry
-        // "client-islands": resolve(__dirname, "src/entry-client-islands.ts"),
+        client: resolve(__dirname, "src/entry-client.ts"),
         // Admin SPA Client Entry
         admin: resolve(__dirname, "src/entry-admin.ts"),
         // Storefront SSR Server Entry (handled by deno task build:server --ssr ...)
@@ -29,6 +29,10 @@ export default defineConfig({
         // You might need separate output config for the SSR build if not using --outDir
       },
     },
+  },
+  ssr: {
+    // external: ["express", "liquidjs", "@vue/server-renderer"],
+    // noExternal: [/vue/],
   },
   plugins: [vue()],
 });

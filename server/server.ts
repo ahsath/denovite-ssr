@@ -2,15 +2,15 @@ import { fromFileUrl, resolve, dirname } from "@std/path";
 import { createServer as createViteServer, type ViteDevServer } from "vite";
 import express from "express";
 import { Liquid } from "liquidjs";
+import type { Render } from "../client/src/entry-server.ts";
 
 const prod = Deno.env.get("NODE_ENV") === "production";
-
-const app = express();
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
 const root = resolve(__dirname, "..");
 
-// Initialize LiquidJS
+const app = express();
+
 const liquid = new Liquid({
   root: resolve(__dirname, "views"),
   extname: ".liquid",
@@ -20,9 +20,10 @@ const liquid = new Liquid({
 app.engine("liquid", liquid.express());
 app.set("views", resolve(__dirname, "views"));
 app.set("view engine", "liquid");
+app.use(express.static(resolve(__dirname, "public")));
 
-// Create Vite server in middleware mode
 let vite: ViteDevServer;
+let render: Render;
 let manifest: Record<string, any> | null = null;
 
 if (!prod) {
@@ -39,9 +40,18 @@ if (!prod) {
     appType: "custom",
   });
 
+  const module = await vite.ssrLoadModule(
+    resolve(root, "client/src/entry-server.ts")
+  );
+  render = module.render;
+
   // Use vite's connect instance as middleware
   app.use(vite.middlewares);
 } else {
+  // Load the island SSR render function from the production build
+  const module = await import(resolve(root, "dist/server/entry-server.js"));
+  render = module.render;
+
   // In production, read the manifest.json file
   try {
     const manifestPath = resolve(root, "dist/.vite/manifest.json");
@@ -53,60 +63,42 @@ if (!prod) {
   }
 
   app.use("/admin", express.static(resolve(root, "dist/admin"))); // Static for admin SPA assets
+  app.use("/client", express.static(resolve(root, "dist/client"))); // Static for client assets
+  app.use("/server", express.static(resolve(root, "dist/server"))); // Static for server assets
 }
 
-// Mock data for products (in a real app, this would come from a database)
-// const mockProducts = [
-//   {
-//     id: 1,
-//     name: "Premium Headphones",
-//     price: 199.99,
-//     description: "High-quality wireless headphones with noise cancellation.",
-//     image: "/images/product1.jpg",
-//   },
-//   {
-//     id: 2,
-//     name: "Smart Watch",
-//     price: 299.99,
-//     description: "Feature-rich smartwatch with health tracking capabilities.",
-//     image: "/images/product2.jpg",
-//   },
-//   {
-//     id: 3,
-//     name: "Wireless Speaker",
-//     price: 149.99,
-//     description: "Portable Bluetooth speaker with premium sound quality.",
-//     image: "/images/product3.jpg",
-//   },
-//   {
-//     id: 4,
-//     name: "Laptop Backpack",
-//     price: 79.99,
-//     description: "Durable laptop backpack with multiple compartments.",
-//     image: "/images/product4.jpg",
-//   },
-// ];
-
-// Serve static files from the public directory
-app.use(express.static(resolve(__dirname, "public")));
-
 // Home page route
-// app.get("/", async (_req, res, next) => {
-//   try {
-//     // Render the home page with LiquidJS
-//     const html = await liquid.renderFile("pages/home", {
-//       title: "Home - Marketplace",
-//       products: mockProducts,
-//     });
+app.get("/", async (_req, res, next) => {
+  const props = { islandId: 789, otherData: "..." }; // Example props
+  const component = "TestIsland"; // Example component name
 
-//     res.status(200).set({ "Content-Type": "text/html" }).end(html);
-//   } catch (e) {
-//     if (e instanceof Error) {
-//       vite.ssrFixStacktrace(e);
-//     }
-//     next(e);
-//   }
-// });
+  try {
+    const appHtml = await render(component, props);
+    // console.log(`Rendered HTML for TestIsland: ${appHtml}`);
+
+    // Convert props to a JSON string and escape it for HTML
+    res.render(
+      "test-island-page",
+      { appHtml, props, component },
+      async (err, html) => {
+        if (err) {
+          res.status(500).send("Error rendering home page");
+        }
+
+        if (!prod) {
+          html = await vite.transformIndexHtml(_req.originalUrl, html);
+        }
+
+        res.status(200).set({ "Content-Type": "text/html" }).end(html);
+      }
+    );
+  } catch (e) {
+    if (e instanceof Error) {
+      vite.ssrFixStacktrace(e);
+    }
+    next(e);
+  }
+});
 
 // Admin SPA route
 app.get("/admin", (req, res, next) => {
@@ -123,7 +115,6 @@ app.get("/admin", (req, res, next) => {
         }
 
         if (!prod) {
-          // Inject Vite HMR client into the HTML
           html = await vite.transformIndexHtml(req.originalUrl, html);
         }
 
@@ -138,67 +129,6 @@ app.get("/admin", (req, res, next) => {
   }
 });
 
-// Products page route
-// app.get("/products", async (_req, res, next) => {
-//   try {
-//     // Render the products page with LiquidJS
-//     const html = await liquid.renderFile("pages/products", {
-//       title: "Products - Marketplace",
-//       products: mockProducts,
-//     });
-
-//     res.status(200).set({ "Content-Type": "text/html" }).end(html);
-//   } catch (e) {
-//     if (e instanceof Error) {
-//       vite.ssrFixStacktrace(e);
-//     }
-//     next(e);
-//   }
-// });
-
-// // Product detail page route
-// app.get("/products/:id", async (req, res, next) => {
-//   try {
-//     const productId = parseInt(req.params.id);
-//     const product = mockProducts.find((p) => p.id === productId);
-
-//     if (!product) {
-//       return res.status(404).send("Product not found");
-//     }
-
-//     // Render the product detail page with LiquidJS
-//     const html = await liquid.renderFile("pages/product-detail", {
-//       title: `${product.name} - Marketplace`,
-//       product,
-//     });
-
-//     res.status(200).set({ "Content-Type": "text/html" }).end(html);
-//   } catch (e) {
-//     if (e instanceof Error) {
-//       vite.ssrFixStacktrace(e);
-//     }
-//     next(e);
-//   }
-// });
-
-// app.get("/products/:id", async (req, res) => {
-//   const productId = parseInt(req.params.id);
-//   const product = mockProducts.find((p) => p.id === productId);
-
-//   if (!product) {
-//     res.status(404).send("Product not found");
-//   } else {
-//     // Render the product detail page with LiquidJS
-//     const html = await liquid.renderFile("pages/product-detail", {
-//       title: `${product.name} - Marketplace`,
-//       product,
-//     });
-
-//     res.status(200).set({ "Content-Type": "text/html" }).end(html);
-//   }
-// });
-
-// Express 5 uses Promise-based error handling
 app.use(
   (
     err: Error,
@@ -207,7 +137,7 @@ app.use(
     _next: express.NextFunction
   ) => {
     console.error(err);
-    res.status(500).send("Something broke!");
+    res.status(500).send("Internal Server Error");
   }
 );
 
