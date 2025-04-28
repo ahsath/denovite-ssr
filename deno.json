@@ -1,0 +1,28 @@
+{
+  "tasks": {
+    "dev": "deno run -A npm:vite@^6.3.3 --config client/vite.config.ts",
+    "preview": "deno run -A npm:vite@^6.3.3 preview",
+    "server:dev": "NODE_ENV=development deno run -A server/server.ts",
+    "server:prod": "NODE_ENV=production deno run -A server/server.ts",
+    "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest",
+    "build": "deno task build:client && deno task build:server"
+  },
+  "imports": {
+    "@std/path": "jsr:@std/path@^1.0.9",
+    "@types/express": "npm:@types/express@^5.0.1",
+    "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^5.2.3",
+    "@vue/tsconfig": "npm:@vue/tsconfig@^0.7.0",
+    "express": "npm:express@^5.1.0",
+    "vite": "npm:vite@^6.3.3",
+    "vue": "npm:vue@^3.5.13",
+    "vue-tsc": "npm:vue-tsc@^2.2.10",
+    "path": "node:path",
+    "@vue/server-renderer": "npm:@vue/server-renderer@3",
+    "liquidjs": "npm:liquidjs@10.21.0"
+  },
+  "nodeModulesDir": "auto",
+  "compilerOptions": {
+    "types": ["npm:@types/express@^5.1.0"],
+    "lib": ["deno.ns", "dom", "dom.iterable", "esnext"]
+  }
+}
