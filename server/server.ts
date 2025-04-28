@@ -1,5 +1,5 @@
 import { fromFileUrl, resolve, dirname } from "@std/path";
-import { createServer as createViteServer } from "vite";
+import { createServer as createViteServer, type ViteDevServer } from "vite";
 import express from "express";
 import { Liquid } from "liquidjs";
 
@@ -14,100 +14,122 @@ const root = resolve(__dirname, "..");
 const liquid = new Liquid({
   root: resolve(__dirname, "views"),
   extname: ".liquid",
-  // cache: process.env.NODE_ENV === "production",
+  // cache: prod,
 });
 
 app.engine("liquid", liquid.express());
 app.set("views", resolve(__dirname, "views"));
 app.set("view engine", "liquid");
 
-// Mock data for products (in a real app, this would come from a database)
-const mockProducts = [
-  {
-    id: 1,
-    name: "Premium Headphones",
-    price: 199.99,
-    description: "High-quality wireless headphones with noise cancellation.",
-    image: "/images/product1.jpg",
-  },
-  {
-    id: 2,
-    name: "Smart Watch",
-    price: 299.99,
-    description: "Feature-rich smartwatch with health tracking capabilities.",
-    image: "/images/product2.jpg",
-  },
-  {
-    id: 3,
-    name: "Wireless Speaker",
-    price: 149.99,
-    description: "Portable Bluetooth speaker with premium sound quality.",
-    image: "/images/product3.jpg",
-  },
-  {
-    id: 4,
-    name: "Laptop Backpack",
-    price: 79.99,
-    description: "Durable laptop backpack with multiple compartments.",
-    image: "/images/product4.jpg",
-  },
-];
-
 // Create Vite server in middleware mode
-const vite = await createViteServer({
-  root,
-  configFile: "client/vite.config.ts",
-  server: {
-    middlewareMode: true,
-    watch: {
-      usePolling: true,
-      interval: 100,
-    },
-  },
-  appType: "custom",
-});
+let vite: ViteDevServer;
+let manifest: Record<string, any> | null = null;
 
-// Use vite's connect instance as middleware
-app.use(vite.middlewares);
+if (!prod) {
+  vite = await createViteServer({
+    root,
+    configFile: "client/vite.config.ts",
+    server: {
+      middlewareMode: true,
+      watch: {
+        usePolling: true,
+        interval: 100,
+      },
+    },
+    appType: "custom",
+  });
+
+  // Use vite's connect instance as middleware
+  app.use(vite.middlewares);
+} else {
+  // In production, read the manifest.json file
+  try {
+    const manifestPath = resolve(root, "dist/.vite/manifest.json");
+    const manifestContent = await Deno.readTextFile(manifestPath);
+    manifest = JSON.parse(manifestContent);
+    console.log("Loaded manifest.json for production build");
+  } catch (error) {
+    console.error("Failed to load manifest.json:", error);
+  }
+
+  app.use("/admin", express.static(resolve(root, "dist/admin"))); // Static for admin SPA assets
+}
+
+// Mock data for products (in a real app, this would come from a database)
+// const mockProducts = [
+//   {
+//     id: 1,
+//     name: "Premium Headphones",
+//     price: 199.99,
+//     description: "High-quality wireless headphones with noise cancellation.",
+//     image: "/images/product1.jpg",
+//   },
+//   {
+//     id: 2,
+//     name: "Smart Watch",
+//     price: 299.99,
+//     description: "Feature-rich smartwatch with health tracking capabilities.",
+//     image: "/images/product2.jpg",
+//   },
+//   {
+//     id: 3,
+//     name: "Wireless Speaker",
+//     price: 149.99,
+//     description: "Portable Bluetooth speaker with premium sound quality.",
+//     image: "/images/product3.jpg",
+//   },
+//   {
+//     id: 4,
+//     name: "Laptop Backpack",
+//     price: 79.99,
+//     description: "Durable laptop backpack with multiple compartments.",
+//     image: "/images/product4.jpg",
+//   },
+// ];
 
 // Serve static files from the public directory
 app.use(express.static(resolve(__dirname, "public")));
 
 // Home page route
-app.get("/", async (_req, res, next) => {
-  try {
-    // Render the home page with LiquidJS
-    const html = await liquid.renderFile("pages/home", {
-      title: "Home - Marketplace",
-      products: mockProducts,
-    });
+// app.get("/", async (_req, res, next) => {
+//   try {
+//     // Render the home page with LiquidJS
+//     const html = await liquid.renderFile("pages/home", {
+//       title: "Home - Marketplace",
+//       products: mockProducts,
+//     });
 
-    res.status(200).set({ "Content-Type": "text/html" }).end(html);
-  } catch (e) {
-    if (e instanceof Error) {
-      vite.ssrFixStacktrace(e);
-    }
-    next(e);
-  }
-});
+//     res.status(200).set({ "Content-Type": "text/html" }).end(html);
+//   } catch (e) {
+//     if (e instanceof Error) {
+//       vite.ssrFixStacktrace(e);
+//     }
+//     next(e);
+//   }
+// });
 
 // Admin SPA route
 app.get("/admin", (req, res, next) => {
   try {
-    res.render("admin", {}, async (err, html) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send("Error rendering admin page");
+    res.render(
+      "admin",
+      {
+        prod,
+        manifest: prod ? manifest : null,
+      },
+      async (err, html) => {
+        if (err) {
+          res.status(500).send("Error rendering admin page");
+        }
+
+        if (!prod) {
+          // Inject Vite HMR client into the HTML
+          html = await vite.transformIndexHtml(req.originalUrl, html);
+        }
+
+        res.status(200).set({ "Content-Type": "text/html" }).end(html);
       }
-
-      // Apply Vite HTML transforms
-      const transformedHtml = await vite.transformIndexHtml(
-        req.originalUrl,
-        html
-      );
-
-      res.status(200).set({ "Content-Type": "text/html" }).end(transformedHtml);
-    });
+    );
   } catch (e) {
     if (e instanceof Error) {
       vite.ssrFixStacktrace(e);

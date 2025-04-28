@@ -1,13 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vue.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin</title>
+    {% if prod and manifest %}
+      {% assign entry = manifest['src/entry-admin.ts'] %}
+      {% if entry.css %}
+        {% for css in entry.css %}
+          <link rel="stylesheet" href="/{{ css }}" />
+        {% endfor %}
+      {% endif %}
+    {% endif %}
   </head>
   <body>
     <div id="app"></div>
-    <script type="module" src="/client/src/entry-admin.ts"></script>
+    {% if prod and manifest %}
+      {% assign entry = manifest['src/entry-admin.ts'] %}
+      <script type="module" src="/{{ entry.file }}"></script>
+    {% else %}
+      <script type="module" src="/client/src/entry-admin.ts"></script>
+    {% endif %}
   </body>
 </html>
