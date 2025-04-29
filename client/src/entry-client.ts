@@ -3,7 +3,8 @@ import { createApp, createSSRApp } from "vue";
 // Map component names (from data-component) to DYNAMIC IMPORTS of the component modules
 // This ensures code splitting - the browser only downloads the JS for islands that are on the page
 const componentsMap: Record<string, () => Promise<any>> = {
-  TestIsland: () => import("./components/TestIsland.vue"), // Dynamic import of the component
+  TestIsland: () => import("./components/TestIsland.vue"),
+  TestIsland2: () => import("./components/TestIsland2.vue"),
 };
 
 async function hydrate() {

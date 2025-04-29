@@ -2,15 +2,15 @@ import { createSSRApp, type Component } from "vue";
 import { renderToString } from "@vue/server-renderer";
 
 import TestIsland from "./components/TestIsland.vue";
+import TestIsland2 from "./components/TestIsland2.vue";
 
 // Map component names (used in data-component) to their component modules
 const componentsMap: Record<string, Component> = {
-  TestIsland, // 'TestIsland' maps to the imported TestIsland component
+  TestIsland,
+  TestIsland2,
 };
-
-// Define a type for props, adjust according to your actual props requirements
 interface Props {
-  [key: string]: unknown; // Or define specific properties if known
+  [key: string]: unknown;
 }
 
 // Function to render a specific component to an HTML string
@@ -35,18 +35,14 @@ export async function render(
   }
 
   try {
-    // Create a minimal createSSRApp instance for this *single* component
     const app = createSSRApp(Component, props);
-    const innerHtml = await renderToString(app);
+    const ctx = {};
+    const innerHtml = await renderToString(app, ctx);
+    console.log(ctx);
 
     // Return the full div structure that the client hydrator will find
     // Ensure the data attributes match what your client hydrator looks for
     return `<div data-component="${componentName}" data-props='${propsJsonString}'>${innerHtml}</div>`;
-
-    // Render this minimal app instance to an HTML string
-    // const html = await renderToString(app);
-
-    // return html; // Return the SSR'd HTML for the component
   } catch (error) {
     console.error(`[SSR] Error rendering "${componentName}":`, error);
     return ``;

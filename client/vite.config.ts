@@ -10,7 +10,7 @@ export default defineConfig({
   build: {
     // Output to a 'dist' folder OUTSIDE the client folder, at the project root level
     outDir: "../dist",
-    emptyOutDir: true, // Clean dist folder on build,
+    emptyOutDir: true, // Clear the output directory before building
 
     rollupOptions: {
       input: {
@@ -23,12 +23,19 @@ export default defineConfig({
       },
       output: {
         // Configure output paths to keep different bundles organized
-        entryFileNames: "[name]/[name]-[hash].js",
+        entryFileNames: (chunkInfo) => {
+          // Prevent hashing for entry-server file
+          if (chunkInfo.name === "entry-server") {
+            return "[name].js";
+          }
+          return "[name]/[name]-[hash].js";
+        },
         chunkFileNames: "[name]/[name]-[hash].js",
         assetFileNames: "[name]/[name]-[hash].[ext]",
         // You might need separate output config for the SSR build if not using --outDir
       },
     },
+    minify: false,
   },
   // ssr: {
   //   external: ["express", "liquidjs", "@vue/server-renderer"],

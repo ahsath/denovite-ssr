@@ -30,7 +30,7 @@ const app = express();
 app.engine("liquid", liquid.express());
 app.set("views", resolve(__dirname, "views"));
 app.set("view engine", "liquid");
-app.use(express.static(resolve(__dirname, "public")));
+// app.use(express.static(resolve(__dirname, "public")));
 
 let vite: ViteDevServer;
 let render: Render;
@@ -70,20 +70,23 @@ if (!prod) {
     console.error("Failed to load manifest.json:", error);
   }
 
-  app.use("/admin", express.static(resolve(root, "dist/admin"))); // Static for admin SPA assets
-  app.use("/client", express.static(resolve(root, "dist/client"))); // Static for client assets
-  app.use("/server", express.static(resolve(root, "dist/server"))); // Static for server assets
+  app.use(express.static(resolve(root, "dist")));
 }
 
 // Home page route
 app.get("/", async (_req, res, next) => {
   try {
-    const html = await render("TestIsland", {
-      islandId: 789,
-      otherData: "...",
-    });
+    const html = await render(
+      "TestIsland",
+      {
+        islandId: 789,
+        otherData: "...",
+      },
+      false
+    );
+    const html2 = await render("TestIsland2", {}, false);
 
-    res.render("test-island-page", { html }, async (err, html) => {
+    res.render("test-island-page", { html, html2 }, async (err, html) => {
       if (err) {
         res.status(500).send("Error rendering home page");
       }

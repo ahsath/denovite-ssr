@@ -1,12 +1,17 @@
 {
   "tasks": {
-    "dev": "deno run -A npm:vite@^6.3.3 --config client/vite.config.ts",
-    "preview": "deno run -A npm:vite@^6.3.3 preview",
     "server:dev": "NODE_ENV=development deno run -A server/server.ts",
-    "server:prod": "NODE_ENV=production deno run -A server/server.ts",
-    "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest",
-    "build:server": "deno run -A npm:vite@^6.3.3 build --ssr client/src/entry-server.ts --outDir dist/server --config client/vite.config.ts",
-    "build": "deno task build:client && deno task build:server"
+    "server:prod": {
+      "description": "Run the server in production mode",
+      "command": "NODE_ENV=production deno run -A server/server.ts",
+      "dependencies": ["build:server"]
+    },
+    "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest --ssrManifest",
+    "build:server": {
+      "description": "Build the server-side code",
+      "command": "deno run -A npm:vite@^6.3.3 build --ssr src/entry-server.ts --outDir ../dist/server --config client/vite.config.ts",
+      "dependencies": ["build:client"]
+    }
   },
   "imports": {
     "@std/path": "jsr:@std/path@^1.0.9",
