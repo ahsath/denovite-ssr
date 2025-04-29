@@ -1,20 +1,23 @@
-import { renderToString } from "@vue/server-renderer"; // Import the server renderer from Vue
-import { createSSRApp } from "vue";
+import { createSSRApp, type Component } from "vue";
+import { renderToString } from "@vue/server-renderer";
 
-// Import the island components you want to be able to SSR
 import TestIsland from "./components/TestIsland.vue";
-// import OtherIsland from './components/OtherIsland.vue'; // Import other islands
 
 // Map component names (used in data-component) to their component modules
-const componentsMap: Record<string, any> = {
+const componentsMap: Record<string, Component> = {
   TestIsland, // 'TestIsland' maps to the imported TestIsland component
-  // OtherIsland, // Add other islands here
 };
 
-// Function to render a specific island component to an HTML string
+// Define a type for props, adjust according to your actual props requirements
+interface Props {
+  [key: string]: unknown; // Or define specific properties if known
+}
+
+// Function to render a specific component to an HTML string
 export async function render(
   componentName: string,
-  props: any = {}
+  props: Props = {},
+  isClientOnly: boolean = Deno.env.get("NODE_ENV") === "development"
 ): Promise<string> {
   const Component = componentsMap[componentName];
 
@@ -25,14 +28,25 @@ export async function render(
     return ``;
   }
 
+  const propsJsonString = JSON.stringify(props);
+
+  if (isClientOnly) {
+    return `<div data-component="${componentName}" data-props='${propsJsonString}' data-client-only="true"></div>`;
+  }
+
   try {
     // Create a minimal createSSRApp instance for this *single* component
     const app = createSSRApp(Component, props);
+    const innerHtml = await renderToString(app);
 
-    // Render this minimal app instance to an HTML string using our mock renderer
-    const html = await renderToString(app);
+    // Return the full div structure that the client hydrator will find
+    // Ensure the data attributes match what your client hydrator looks for
+    return `<div data-component="${componentName}" data-props='${propsJsonString}'>${innerHtml}</div>`;
 
-    return html; // Return the SSR'd HTML for the island
+    // Render this minimal app instance to an HTML string
+    // const html = await renderToString(app);
+
+    // return html; // Return the SSR'd HTML for the component
   } catch (error) {
     console.error(`[SSR] Error rendering "${componentName}":`, error);
     return ``;

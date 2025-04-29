@@ -1,4 +1,4 @@
-import { createApp } from "vue"; // Need createApp and h for client mounting
+import { createApp, createSSRApp } from "vue";
 
 // Map component names (from data-component) to DYNAMIC IMPORTS of the component modules
 // This ensures code splitting - the browser only downloads the JS for islands that are on the page
@@ -27,30 +27,37 @@ async function hydrate() {
       // Use JSON.parse to convert the string attribute back to a JavaScript object
       const propsData = propsDataAttr ? JSON.parse(propsDataAttr) : {};
 
+      // **Check for the client-only marker attribute**
+      const isClientOnly = component.hasAttribute("data-client-only");
+
       // Dynamically import the component module (this is where the JS file is fetched)
       const componentModule = await importComponent();
       const Component = componentModule.default || componentModule; // Get the component definition
 
-      // Create a minimal Vue app instance for *this specific element*
-      // Although the SSR side used createSSRApp, createApp().mount(el, true) works for hydration
-      // However, to be fully consistent with potential future needs (like per-component context/plugins),
-      // you *could* create a small helper function similar to the factory idea, but using createApp
-      // for client mounting if createSSRApp isn't strictly needed client-side.
-      // For now, let's stick to the simplest mount:
-      const app = createApp(Component, propsData);
+      let app;
+      if (isClientOnly) {
+        // If the component is client-only, use createApp
+        app = createApp(Component, propsData);
+      } else {
+        // For SSR-hydrated components, use createSSRApp
+        app = createSSRApp(Component, propsData);
+      }
 
       // Optional: Add any component-specific plugins or context needed client-side
       // app.use(...)
       // app.provide(...)
 
-      // Mount the app instance to the component element.
-      // Vue 3 automatically attempts hydration if the element has matching SSR'd content.
-      app.mount(component); // No second argument needed
+      app.mount(component);
 
-      console.log(`[Hydrator] Hydrated component: ${componentName}`, {
-        props: propsData,
-        elementId: component.id,
-      });
+      console.log(
+        `[Hydrator] Hydrated ${
+          isClientOnly ? "client-only" : "SSR"
+        } component: ${componentName}`,
+        {
+          props: propsData,
+          elementId: component.id,
+        }
+      );
     } catch (error) {
       console.error(
         `[Hydrator] Error hydrating component "${componentName}":`,

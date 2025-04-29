@@ -1,21 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Island Page</title>
-     {% comment %} Link to main CSS assets if any {% endcomment %}
-     {% comment %} {# Link production CSS for island hydrator bundle here in prod #} {% endcomment %}
 </head>
 <body>
     <h1>Storefront Page with Island</h1>
 
-    <div id="test-island-container" data-component="{{ component }}" data-props="{{ props | json | escape }}">
-         {% comment %} {# Server will inject the SSR'd HTML for TestIsland here #} {% endcomment %}
-         {% comment %} The variable 'html' comes from the server route handler {% endcomment %}
-         {{ appHtml | raw }}
-    </div>
+    {{ html | raw }}
 
     <p>Some static content below the island.</p>
+
+    <script type="module" src="/client/src/entry-client.ts"></script>
 </body>
 </html>

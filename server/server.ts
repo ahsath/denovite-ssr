@@ -4,19 +4,29 @@ import express from "express";
 import { Liquid } from "liquidjs";
 import type { Render } from "../client/src/entry-server.ts";
 
-const prod = Deno.env.get("NODE_ENV") === "production";
+interface ViteManifestEntry {
+  file: string;
+  src?: string;
+  isEntry?: boolean;
+  css?: string[];
+  assets?: string[];
+}
 
+interface ViteManifest {
+  [key: string]: ViteManifestEntry;
+}
+
+const prod = Deno.env.get("NODE_ENV") === "production";
 const __dirname = dirname(fromFileUrl(import.meta.url));
 const root = resolve(__dirname, "..");
-
-const app = express();
 
 const liquid = new Liquid({
   root: resolve(__dirname, "views"),
   extname: ".liquid",
-  // cache: prod,
+  cache: prod,
 });
 
+const app = express();
 app.engine("liquid", liquid.express());
 app.set("views", resolve(__dirname, "views"));
 app.set("view engine", "liquid");
@@ -24,7 +34,7 @@ app.use(express.static(resolve(__dirname, "public")));
 
 let vite: ViteDevServer;
 let render: Render;
-let manifest: Record<string, any> | null = null;
+let manifest: ViteManifest | null = null;
 
 if (!prod) {
   vite = await createViteServer({
@@ -48,15 +58,13 @@ if (!prod) {
   // Use vite's connect instance as middleware
   app.use(vite.middlewares);
 } else {
-  // Load the island SSR render function from the production build
   const module = await import(resolve(root, "dist/server/entry-server.js"));
   render = module.render;
 
   // In production, read the manifest.json file
   try {
     const manifestPath = resolve(root, "dist/.vite/manifest.json");
-    const manifestContent = await Deno.readTextFile(manifestPath);
-    manifest = JSON.parse(manifestContent);
+    manifest = JSON.parse(await Deno.readTextFile(manifestPath));
     console.log("Loaded manifest.json for production build");
   } catch (error) {
     console.error("Failed to load manifest.json:", error);
@@ -69,29 +77,23 @@ if (!prod) {
 
 // Home page route
 app.get("/", async (_req, res, next) => {
-  const props = { islandId: 789, otherData: "..." }; // Example props
-  const component = "TestIsland"; // Example component name
-
   try {
-    const appHtml = await render(component, props);
-    // console.log(`Rendered HTML for TestIsland: ${appHtml}`);
+    const html = await render("TestIsland", {
+      islandId: 789,
+      otherData: "...",
+    });
 
-    // Convert props to a JSON string and escape it for HTML
-    res.render(
-      "test-island-page",
-      { appHtml, props, component },
-      async (err, html) => {
-        if (err) {
-          res.status(500).send("Error rendering home page");
-        }
-
-        if (!prod) {
-          html = await vite.transformIndexHtml(_req.originalUrl, html);
-        }
-
-        res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    res.render("test-island-page", { html }, async (err, html) => {
+      if (err) {
+        res.status(500).send("Error rendering home page");
       }
-    );
+
+      if (!prod) {
+        html = await vite.transformIndexHtml(_req.originalUrl, html);
+      }
+
+      res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    });
   } catch (e) {
     if (e instanceof Error) {
       vite.ssrFixStacktrace(e);

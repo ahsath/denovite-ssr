@@ -30,9 +30,9 @@ export default defineConfig({
       },
     },
   },
-  ssr: {
-    // external: ["express", "liquidjs", "@vue/server-renderer"],
-    // noExternal: [/vue/],
-  },
+  // ssr: {
+  //   external: ["express", "liquidjs", "@vue/server-renderer"],
+  //   noExternal: [/vue/],
+  // },
   plugins: [vue()],
 });
