@@ -4,7 +4,6 @@ import { fromFileUrl, resolve, dirname } from "@std/path";
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
 
-// https://vitejs.dev/config/
 export default defineConfig({
   root: __dirname, // The client folder is the root for this Vite config
   build: {
@@ -32,14 +31,8 @@ export default defineConfig({
         },
         chunkFileNames: "[name]/[name]-[hash].js",
         assetFileNames: "[name]/[name]-[hash].[ext]",
-        // You might need separate output config for the SSR build if not using --outDir
       },
     },
-    minify: false,
   },
-  // ssr: {
-  //   external: ["express", "liquidjs", "@vue/server-renderer"],
-  //   noExternal: [/vue/],
-  // },
   plugins: [vue()],
 });
