@@ -1,11 +1,17 @@
 {
   "tasks": {
-    "dev": "deno run -A npm:vite@^6.3.3 --config client/vite.config.ts",
-    "preview": "deno run -A npm:vite@^6.3.3 preview",
     "server:dev": "NODE_ENV=development deno run -A server/server.ts",
-    "server:prod": "NODE_ENV=production deno run -A server/server.ts",
+    "server:prod": {
+      "description": "Run the server in production mode",
+      "command": "NODE_ENV=production deno run -A server/server.ts",
+      "dependencies": ["build:server"]
+    },
     "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest",
-    "build": "deno task build:client && deno task build:server"
+    "build:server": {
+      "description": "Build the server-side code",
+      "command": "deno run -A npm:vite@^6.3.3 build --ssr src/entry-server.ts --outDir ../dist/server --config client/vite.config.ts",
+      "dependencies": ["build:client"]
+    }
   },
   "imports": {
     "@std/path": "jsr:@std/path@^1.0.9",
@@ -17,8 +23,8 @@
     "vue": "npm:vue@^3.5.13",
     "vue-tsc": "npm:vue-tsc@^2.2.10",
     "path": "node:path",
-    "@vue/server-renderer": "npm:@vue/server-renderer@3",
-    "liquidjs": "npm:liquidjs@10.21.0"
+    "@vue/server-renderer": "npm:@vue/server-renderer@^3.5.13",
+    "liquidjs": "npm:liquidjs@^10.21.0"
   },
   "nodeModulesDir": "auto",
   "compilerOptions": {
