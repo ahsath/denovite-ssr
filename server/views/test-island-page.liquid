@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Island Page</title>
-
     {% if prod and manifest %}
       {% for module in modules %}
         {% assign entry = manifest[module] %}
@@ -14,7 +13,7 @@
               <link rel="stylesheet" href="/{{ css }}" />
             {% endfor %}
           {% endif %}
-          <link rel="modulepreload" crossorigin href="/{{ entry.file }}" />
+          <link rel="modulepreload" as="script" crossorigin href="/{{ entry.file }}" />
         {% endif %}
       {% endfor %}
     {% endif %}
@@ -22,8 +21,7 @@
 <body>
     <h1>Storefront Page with Island</h1>
 
-    {{ TestIsland | raw }}
-    {{ TestIsland2 | raw }}
+    {{ html }}
 
     <p>Some static content below the island.</p>
 

@@ -76,20 +76,15 @@ if (!prod) {
 // Home page route
 app.get("/", async (_req, res, next) => {
   try {
-    const { html: TestIsland, ctx } = await render({
+    const { html, ctx } = await render({
       componentName: "TestIsland",
       props: { islandId: 789, otherData: "..." },
+      isClientOnly: false,
     });
-
-    const { html: TestIsland2, ctx: ctx2 } = await render({
-      componentName: "TestIsland2",
-    });
-
-    const modules = new Set([...ctx.modules, ...ctx2.modules]);
 
     res.render(
       "test-island-page",
-      { TestIsland, TestIsland2, prod, manifest, modules },
+      { html, prod, manifest, modules: ctx.modules },
       async (err, html) => {
         if (err) {
           console.error("Liquid rendering error:", err);
