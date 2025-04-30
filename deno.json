@@ -20,6 +20,7 @@
     "@vue/tsconfig": "npm:@vue/tsconfig@^0.7.0",
     "express": "npm:express@^5.1.0",
     "vite": "npm:vite@^6.3.3",
+    "vite-plugin-vue-devtools": "npm:vite-plugin-vue-devtools@^7.7.6",
     "vue": "npm:vue@^3.5.13",
     "vue-tsc": "npm:vue-tsc@^2.2.10",
     "path": "node:path",

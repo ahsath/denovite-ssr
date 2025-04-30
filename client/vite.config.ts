@@ -1,6 +1,7 @@
-import { defineConfig } from "npm:vite@6.3.3";
-import vue from "npm:@vitejs/plugin-vue@5.2.3";
 import { fromFileUrl, resolve, dirname } from "@std/path";
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import vueDevTools from "vite-plugin-vue-devtools";
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
 
@@ -34,5 +35,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [vue()],
+  plugins: [vue(), vueDevTools()],
 });

@@ -1,14 +1,7 @@
-import { createSSRApp, type Component } from "vue";
+import { createSSRApp } from "vue";
 import { renderToString, type SSRContext } from "@vue/server-renderer";
+import { componentsMap } from "./main.ts";
 
-import TestIsland from "./components/TestIsland.vue";
-import TestIsland2 from "./components/TestIsland2.vue";
-
-// Map component names (used in data-component) to their component modules
-const componentsMap: Record<string, Component> = {
-  TestIsland,
-  TestIsland2,
-};
 interface Props {
   [key: string]: unknown;
 }
@@ -37,12 +30,17 @@ export async function render(options: RenderOptions): Promise<RenderResult> {
     props = {},
     isClientOnly = Deno.env.get("NODE_ENV") === "development",
   } = options;
-  const Component = componentsMap[componentName];
+  if (!componentsMap[componentName]) {
+    throw new Error(
+      `[SSR] Component "${componentName}" not found in componentsMap.`
+    );
+  }
+
+  let Component = await componentsMap[componentName]();
+  Component = Component.default || Component;
 
   if (!Component) {
-    throw new Error(
-      `[SSR] Component "${componentName}" not found in server map.`
-    );
+    throw new Error(`[SSR] Component "${componentName}" could not be loaded.`);
   }
 
   const propsJsonString = JSON.stringify(props);
