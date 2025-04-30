@@ -15,6 +15,7 @@ const count = ref(0);
 
 <style>
 .test-island {
+  background-color: aliceblue;
   border: 1px solid blue;
   padding: 10px;
   margin: 10px;

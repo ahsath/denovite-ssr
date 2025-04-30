@@ -4,15 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Island Page</title>
+
+    {% if prod and manifest %}
+      {% for module in modules %}
+        {% assign entry = manifest[module] %}
+        {% if entry and entry.file %}
+          {% if entry.css %}
+            {% for css in entry.css %}
+              <link rel="stylesheet" href="/{{ css }}" />
+            {% endfor %}
+          {% endif %}
+          <link rel="modulepreload" crossorigin href="/{{ entry.file }}" />
+        {% endif %}
+      {% endfor %}
+    {% endif %}
 </head>
 <body>
     <h1>Storefront Page with Island</h1>
 
-    {{ html | raw }}
-    {{ html2 | raw }}
+    {{ TestIsland | raw }}
+    {{ TestIsland2 | raw }}
 
     <p>Some static content below the island.</p>
 
-    <script type="module" src="/client/src/entry-client.ts"></script>
+    {% if prod and manifest %}
+      <script type="module" src="/{{ manifest['src/entry-client.ts'].file }}"></script>
+    {% else %}
+      <script type="module" src="/client/src/entry-client.ts"></script>
+    {% endif %}
 </body>
 </html>

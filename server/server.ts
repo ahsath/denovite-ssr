@@ -76,27 +76,35 @@ if (!prod) {
 // Home page route
 app.get("/", async (_req, res, next) => {
   try {
-    const html = await render(
-      "TestIsland",
-      {
-        islandId: 789,
-        otherData: "...",
-      },
-      false
-    );
-    const html2 = await render("TestIsland2", {}, false);
-
-    res.render("test-island-page", { html, html2 }, async (err, html) => {
-      if (err) {
-        res.status(500).send("Error rendering home page");
-      }
-
-      if (!prod) {
-        html = await vite.transformIndexHtml(_req.originalUrl, html);
-      }
-
-      res.status(200).set({ "Content-Type": "text/html" }).end(html);
+    const { html: TestIsland, ctx } = await render({
+      componentName: "TestIsland",
+      props: { islandId: 789, otherData: "..." },
+      isClientOnly: false,
     });
+
+    const { html: TestIsland2, ctx: ctx2 } = await render({
+      componentName: "TestIsland2",
+      isClientOnly: false,
+    });
+
+    const modules = new Set([...ctx.modules, ...ctx2.modules]);
+
+    res.render(
+      "test-island-page",
+      { TestIsland, TestIsland2, prod, manifest, modules },
+      async (err, html) => {
+        if (err) {
+          console.error("Liquid rendering error:", err);
+          res.status(500).send("Error rendering home page");
+        }
+
+        if (!prod) {
+          html = await vite.transformIndexHtml(_req.originalUrl, html);
+        }
+
+        res.status(200).set({ "Content-Type": "text/html" }).end(html);
+      }
+    );
   } catch (e) {
     if (e instanceof Error) {
       vite.ssrFixStacktrace(e);

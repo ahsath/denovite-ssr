@@ -6,7 +6,7 @@
       "command": "NODE_ENV=production deno run -A server/server.ts",
       "dependencies": ["build:server"]
     },
-    "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest --ssrManifest",
+    "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest",
     "build:server": {
       "description": "Build the server-side code",
       "command": "deno run -A npm:vite@^6.3.3 build --ssr src/entry-server.ts --outDir ../dist/server --config client/vite.config.ts",
