@@ -1586,7 +1586,6 @@
     "dependencies": [
       "jsr:@std/path@^1.0.9",
       "npm:@types/express@^5.0.1",
-      "npm:@types/express@^5.1.0",
       "npm:@vitejs/plugin-vue@^5.2.3",
       "npm:@vue/server-renderer@^3.5.13",
       "npm:@vue/tsconfig@0.7",

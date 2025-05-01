@@ -29,7 +29,7 @@
   },
   "nodeModulesDir": "auto",
   "compilerOptions": {
-    "types": ["npm:@types/express@^5.1.0"],
+    "types": ["@types/express"],
     "lib": ["deno.ns", "dom", "dom.iterable", "esnext"]
   }
 }
