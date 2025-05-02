@@ -17,6 +17,7 @@ interface ViteManifest {
 }
 
 const prod = Deno.env.get("NODE_ENV") === "production";
+const port = Deno.env.get("PORT") || 8080;
 const __dirname = dirname(fromFileUrl(import.meta.url));
 const root = resolve(__dirname, "..");
 
@@ -147,6 +148,6 @@ app.use(
   }
 );
 
-app.listen(3000, () => {
-  console.log("Server running at http://localhost:3000");
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
 });

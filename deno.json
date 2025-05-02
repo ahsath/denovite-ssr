@@ -1,11 +1,7 @@
 {
   "tasks": {
     "server:dev": "NODE_ENV=development deno run -A server/server.ts",
-    "server:prod": {
-      "description": "Run the server in production mode",
-      "command": "NODE_ENV=production deno run -A server/server.ts",
-      "dependencies": ["build:server"]
-    },
+    "server:prod": "NODE_ENV=production deno run -A server/server.ts",
     "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest",
     "build:server": {
       "description": "Build the server-side code",
