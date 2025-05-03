@@ -2,6 +2,7 @@ import { fromFileUrl, resolve, dirname } from "@std/path";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueDevTools from "vite-plugin-vue-devtools";
+import tailwindcss from "@tailwindcss/vite";
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
 
@@ -18,8 +19,8 @@ export default defineConfig({
         client: resolve(__dirname, "src/entry-client.ts"),
         // Admin SPA Client Entry
         admin: resolve(__dirname, "src/entry-admin.ts"),
-        // Storefront SSR Server Entry (handled by deno task build:server --ssr ...)
-        // You don't list the SSR entry here in 'input' when using the --ssr flag like in deno.json task
+        // Common CSS file
+        css: resolve(__dirname, "src/assets/main.css"),
       },
       output: {
         // Configure output paths to keep different bundles organized
@@ -35,5 +36,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [vue(), vueDevTools()],
+  plugins: [vue(), vueDevTools(), tailwindcss()],
 });

@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Island Page</title>
     {% if prod and manifest %}
+      {% assign entry = manifest['src/assets/main.css'] %}
+      {% if entry.file %}
+          <link rel="stylesheet" href="/{{ entry.file }}" />
+      {% endif %}
       {% for module in modules %}
         {% assign entry = manifest[module] %}
         {% if entry and entry.file %}
@@ -16,6 +20,8 @@
           <link rel="modulepreload" as="script" crossorigin href="/{{ entry.file }}" />
         {% endif %}
       {% endfor %}
+    {% else %}
+      <link rel="stylesheet" href="/client/src/assets/main.css" />
     {% endif %}
 </head>
 <body>
@@ -23,7 +29,7 @@
 
     {{ html }}
 
-    <p>Some static content below the island.</p>
+    <p class="text-red-500">Some static content below the island.</p>
 
     {% if prod and manifest %}
       <script type="module" src="/{{ manifest['src/entry-client.ts'].file }}"></script>
