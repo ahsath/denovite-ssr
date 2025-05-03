@@ -80,7 +80,6 @@ app.get("/", async (_req, res, next) => {
     const { html, ctx } = await render({
       componentName: "TestIsland",
       props: { islandId: 789, otherData: "..." },
-      isClientOnly: false,
     });
 
     res.render(
