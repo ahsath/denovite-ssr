@@ -1,3 +1,13 @@
 <template>
-  <h1>Admin</h1>
+  <h1 class="app">Admin</h1>
 </template>
+
+<script lang="ts" setup></script>
+
+<style>
+.app {
+  size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  text-decoration: underline;
+}
+</style>

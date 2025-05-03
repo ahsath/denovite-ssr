@@ -1,6 +1,5 @@
 import { createApp } from "vue";
 import AdminApp from "./admin/App.vue"; // Root component for admin
-import "./assets/admin.css";
 
 const app = createApp(AdminApp);
 
