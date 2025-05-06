@@ -12,30 +12,30 @@
 {%- if prod -%}
   <link rel="stylesheet" href="/{{ manifest[global_css_key].file }}" />
 
-  {% if entry_point_key %}
-    {% assign entry = manifest[entry_point_key] %}
-    {% for css_file in entry.css %}
+  {%- if entry_point_key -%}
+    {%- assign entry = manifest[entry_point_key] -%}
+    {%- for css_file in entry.css -%}
       <link rel="stylesheet" href="/{{ css_file }}" />
-    {% endfor %}
-  {% endif %}
+    {%- endfor -%}
+  {%- endif -%}
 
-  {% if modules %}
-    {% for module_path in modules %}
-      {% assign module_entry = manifest[module_path] %}
-      {% if module_entry and module_entry.file %}
-        {% if module_entry.css %}
+  {%- if modules -%}
+    {%- for module_path in modules -%}
+      {%- assign module_entry = manifest[module_path] -%}
+      {%- if module_entry and module_entry.file -%}
+        {%- if module_entry.css -%}
           {% for css_file in module_entry.css %}
             <link rel="stylesheet" href="/{{ css_file }}" />
-          {% endfor %}
+          {%- endfor -%}
         {% endif %}
         <link
           rel="modulepreload"
           as="script"
           crossorigin
           href="/{{ module_entry.file }}" />
-      {% endif %}
-    {% endfor %}
-  {% endif %}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
 
 {%- else -%}
   <link rel="stylesheet" href="/client/{{ global_css_key }}" />

@@ -7,10 +7,10 @@
 {% endcomment %}
 
 {%- if prod -%}
-  {% assign entry = manifest[entry_point_key] %}
-  {% if entry.file %}
+  {%- assign entry = manifest[entry_point_key] -%}
+  {%- if entry.file -%}
     <script type="module" src="/{{ entry.file }}"></script>
-  {% endif %}
+  {%- endif -%}
 {%- else -%}
   <script type="module" src="/client/{{ entry_point_key }}"></script>
 {%- endif -%}
