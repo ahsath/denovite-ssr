@@ -1,0 +1,16 @@
+{% comment %}
+  Renders the main entry script tag based on Vite manifest or dev paths.
+  Inputs:
+  - prod: boolean (true for production)
+  - manifest: object (Vite manifest content)
+  - entry_point_key: string (e.g., 'src/entry-admin.ts' or 'src/entry-client.ts')
+{% endcomment %}
+
+{%- if prod -%}
+  {% assign entry = manifest[entry_point_key] %}
+  {% if entry.file %}
+    <script type="module" src="/{{ entry.file }}"></script>
+  {% endif %}
+{%- else -%}
+  <script type="module" src="/client/{{ entry_point_key }}"></script>
+{%- endif -%}
