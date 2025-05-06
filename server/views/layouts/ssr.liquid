@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title | default: "SSR" }}</title>
+    {% assign entry_point_key = 'src/entry-client.ts' %}
+    {% render 'vite-head-assets'
+      , entry_point_key: entry_point_key
+      , modules: modules %}
+
+  </head>
+  <body>
+    {% block %}
+    {% endblock %}
+    {% render 'vite-body-script'
+      , entry_point_key: entry_point_key %}
+  </body>
+</html>

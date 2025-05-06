@@ -2,10 +2,11 @@
   "version": "5",
   "specifiers": {
     "jsr:@std/path@^1.0.9": "1.0.9",
-    "npm:@tailwindcss/vite@^4.1.5": "4.1.5_vite@6.3.3__picomatch@4.0.2",
+    "npm:@tailwindcss/vite@^4.1.5": "4.1.5_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0",
     "npm:@types/express@^5.0.1": "5.0.1",
-    "npm:@vitejs/plugin-vue@5.2.3": "5.2.3_vite@6.3.3__picomatch@4.0.2_vue@3.5.13",
-    "npm:@vitejs/plugin-vue@^5.2.3": "5.2.3_vite@6.3.3__picomatch@4.0.2_vue@3.5.13",
+    "npm:@types/node@*": "22.12.0",
+    "npm:@vitejs/plugin-vue@5.2.3": "5.2.3_vite@6.3.3__picomatch@4.0.2_vue@3.5.13_@types+node@22.12.0",
+    "npm:@vitejs/plugin-vue@^5.2.3": "5.2.3_vite@6.3.3__picomatch@4.0.2_vue@3.5.13_@types+node@22.12.0",
     "npm:@vue/server-renderer@3": "3.5.13_vue@3.5.13",
     "npm:@vue/server-renderer@^3.5.13": "3.5.13_vue@3.5.13",
     "npm:@vue/tsconfig@0.7": "0.7.0_vue@3.5.13",
@@ -13,9 +14,9 @@
     "npm:express@^5.1.0": "5.1.0",
     "npm:liquidjs@^10.21.0": "10.21.0",
     "npm:tailwindcss@^4.1.5": "4.1.5",
-    "npm:vite-plugin-vue-devtools@^7.7.6": "7.7.6_vite@6.3.3__picomatch@4.0.2_vue@3.5.13",
-    "npm:vite@6.3.3": "6.3.3_picomatch@4.0.2",
-    "npm:vite@^6.3.3": "6.3.3_picomatch@4.0.2",
+    "npm:vite-plugin-vue-devtools@^7.7.6": "7.7.6_vite@6.3.3__picomatch@4.0.2_vue@3.5.13_@types+node@22.12.0",
+    "npm:vite@6.3.3": "6.3.3_picomatch@4.0.2_@types+node@22.12.0",
+    "npm:vite@^6.3.3": "6.3.3_picomatch@4.0.2_@types+node@22.12.0",
     "npm:vue-tsc@^2.2.10": "2.2.10_typescript@5.8.3",
     "npm:vue@^3.5.13": "3.5.13"
   },
@@ -650,7 +651,16 @@
         "@tailwindcss/node",
         "@tailwindcss/oxide",
         "tailwindcss",
-        "vite"
+        "vite@6.3.3_picomatch@4.0.2"
+      ]
+    },
+    "@tailwindcss/vite@4.1.5_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0": {
+      "integrity": "sha512-FE1stRoqdHSb7RxesMfCXE8icwI1W6zGE/512ae3ZDrpkQYTTYeSyUJPRCjZd8CwVAhpDUbi1YR8pcZioFJQ/w==",
+      "dependencies": [
+        "@tailwindcss/node",
+        "@tailwindcss/oxide",
+        "tailwindcss",
+        "vite@6.3.3_picomatch@4.0.2_@types+node@22.12.0"
       ]
     },
     "@tybys/wasm-util@0.9.0": {
@@ -728,7 +738,14 @@
     "@vitejs/plugin-vue@5.2.3_vite@6.3.3__picomatch@4.0.2_vue@3.5.13": {
       "integrity": "sha512-IYSLEQj4LgZZuoVpdSUCw3dIynTWQgPlaRP6iAvMle4My0HdYwr5g5wQAfwOeHQBmYwEkqF70nRpSilr6PoUDg==",
       "dependencies": [
-        "vite",
+        "vite@6.3.3_picomatch@4.0.2",
+        "vue"
+      ]
+    },
+    "@vitejs/plugin-vue@5.2.3_vite@6.3.3__picomatch@4.0.2_vue@3.5.13_@types+node@22.12.0": {
+      "integrity": "sha512-IYSLEQj4LgZZuoVpdSUCw3dIynTWQgPlaRP6iAvMle4My0HdYwr5g5wQAfwOeHQBmYwEkqF70nRpSilr6PoUDg==",
+      "dependencies": [
+        "vite@6.3.3_picomatch@4.0.2_@types+node@22.12.0",
         "vue"
       ]
     },
@@ -834,7 +851,19 @@
         "mitt",
         "nanoid@5.1.5",
         "pathe",
-        "vite-hot-client",
+        "vite-hot-client@2.0.4_vite@6.3.3__picomatch@4.0.2",
+        "vue"
+      ]
+    },
+    "@vue/devtools-core@7.7.6_vue@3.5.13_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0": {
+      "integrity": "sha512-ghVX3zjKPtSHu94Xs03giRIeIWlb9M+gvDRVpIZ/cRIxKHdW6HE/sm1PT3rUYS3aV92CazirT93ne+7IOvGUWg==",
+      "dependencies": [
+        "@vue/devtools-kit",
+        "@vue/devtools-shared",
+        "mitt",
+        "nanoid@5.1.5",
+        "pathe",
+        "vite-hot-client@2.0.4_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0",
         "vue"
       ]
     },
@@ -1840,7 +1869,13 @@
     "vite-hot-client@2.0.4_vite@6.3.3__picomatch@4.0.2": {
       "integrity": "sha512-W9LOGAyGMrbGArYJN4LBCdOC5+Zwh7dHvOHC0KmGKkJhsOzaKbpo/jEjpPKVHIW0/jBWj8RZG0NUxfgA8BxgAg==",
       "dependencies": [
-        "vite"
+        "vite@6.3.3_picomatch@4.0.2"
+      ]
+    },
+    "vite-hot-client@2.0.4_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0": {
+      "integrity": "sha512-W9LOGAyGMrbGArYJN4LBCdOC5+Zwh7dHvOHC0KmGKkJhsOzaKbpo/jEjpPKVHIW0/jBWj8RZG0NUxfgA8BxgAg==",
+      "dependencies": [
+        "vite@6.3.3_picomatch@4.0.2_@types+node@22.12.0"
       ]
     },
     "vite-plugin-inspect@0.8.9_vite@6.3.3__picomatch@4.0.2": {
@@ -1855,20 +1890,48 @@
         "perfect-debounce",
         "picocolors",
         "sirv",
-        "vite"
+        "vite@6.3.3_picomatch@4.0.2"
+      ]
+    },
+    "vite-plugin-inspect@0.8.9_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0": {
+      "integrity": "sha512-22/8qn+LYonzibb1VeFZmISdVao5kC22jmEKm24vfFE8siEn47EpVcCLYMv6iKOYMJfjSvSJfueOwcFCkUnV3A==",
+      "dependencies": [
+        "@antfu/utils",
+        "@rollup/pluginutils",
+        "debug",
+        "error-stack-parser-es",
+        "fs-extra",
+        "open",
+        "perfect-debounce",
+        "picocolors",
+        "sirv",
+        "vite@6.3.3_picomatch@4.0.2_@types+node@22.12.0"
       ]
     },
     "vite-plugin-vue-devtools@7.7.6_vite@6.3.3__picomatch@4.0.2_vue@3.5.13": {
       "integrity": "sha512-L7nPVM5a7lgit/Z+36iwoqHOaP3wxqVi1UvaDJwGCfblS9Y6vNqf32ILlzJVH9c47aHu90BhDXeZc+rgzHRHcw==",
       "dependencies": [
-        "@vue/devtools-core",
+        "@vue/devtools-core@7.7.6_vue@3.5.13_vite@6.3.3__picomatch@4.0.2",
         "@vue/devtools-kit",
         "@vue/devtools-shared",
         "execa",
         "sirv",
-        "vite",
-        "vite-plugin-inspect",
-        "vite-plugin-vue-inspector"
+        "vite@6.3.3_picomatch@4.0.2",
+        "vite-plugin-inspect@0.8.9_vite@6.3.3__picomatch@4.0.2",
+        "vite-plugin-vue-inspector@5.3.1_vite@6.3.3__picomatch@4.0.2_@babel+core@7.26.10"
+      ]
+    },
+    "vite-plugin-vue-devtools@7.7.6_vite@6.3.3__picomatch@4.0.2_vue@3.5.13_@types+node@22.12.0": {
+      "integrity": "sha512-L7nPVM5a7lgit/Z+36iwoqHOaP3wxqVi1UvaDJwGCfblS9Y6vNqf32ILlzJVH9c47aHu90BhDXeZc+rgzHRHcw==",
+      "dependencies": [
+        "@vue/devtools-core@7.7.6_vue@3.5.13_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0",
+        "@vue/devtools-kit",
+        "@vue/devtools-shared",
+        "execa",
+        "sirv",
+        "vite@6.3.3_picomatch@4.0.2_@types+node@22.12.0",
+        "vite-plugin-inspect@0.8.9_vite@6.3.3__picomatch@4.0.2_@types+node@22.12.0",
+        "vite-plugin-vue-inspector@5.3.1_vite@6.3.3__picomatch@4.0.2_@babel+core@7.26.10_@types+node@22.12.0"
       ]
     },
     "vite-plugin-vue-inspector@5.3.1_vite@6.3.3__picomatch@4.0.2_@babel+core@7.26.10": {
@@ -1883,7 +1946,22 @@
         "@vue/compiler-dom",
         "kolorist",
         "magic-string",
-        "vite"
+        "vite@6.3.3_picomatch@4.0.2"
+      ]
+    },
+    "vite-plugin-vue-inspector@5.3.1_vite@6.3.3__picomatch@4.0.2_@babel+core@7.26.10_@types+node@22.12.0": {
+      "integrity": "sha512-cBk172kZKTdvGpJuzCCLg8lJ909wopwsu3Ve9FsL1XsnLBiRT9U3MePcqrgGHgCX2ZgkqZmAGR8taxw+TV6s7A==",
+      "dependencies": [
+        "@babel/core",
+        "@babel/plugin-proposal-decorators",
+        "@babel/plugin-syntax-import-attributes",
+        "@babel/plugin-syntax-import-meta",
+        "@babel/plugin-transform-typescript",
+        "@vue/babel-plugin-jsx",
+        "@vue/compiler-dom",
+        "kolorist",
+        "magic-string",
+        "vite@6.3.3_picomatch@4.0.2_@types+node@22.12.0"
       ]
     },
     "vite@6.3.3_picomatch@4.0.2": {
@@ -1898,6 +1976,25 @@
       ],
       "optionalDependencies": [
         "fsevents"
+      ],
+      "bin": true
+    },
+    "vite@6.3.3_picomatch@4.0.2_@types+node@22.12.0": {
+      "integrity": "sha512-5nXH+QsELbFKhsEfWLkHrvgRpTdGJzqOZ+utSdmPTvwHmvU6ITTm3xx+mRusihkcI8GeC7lCDyn3kDtiki9scw==",
+      "dependencies": [
+        "@types/node",
+        "esbuild",
+        "fdir",
+        "picomatch",
+        "postcss",
+        "rollup",
+        "tinyglobby"
+      ],
+      "optionalDependencies": [
+        "fsevents"
+      ],
+      "optionalPeers": [
+        "@types/node"
       ],
       "bin": true
     },
