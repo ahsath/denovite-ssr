@@ -5,15 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title | default: "SSR" }}</title>
     {% assign entry_point_key = 'src/entry-client.ts' %}
-    {% render 'vite-head-assets'
-      , entry_point_key: entry_point_key
-      , modules: modules %}
-
+    {% if prod %}
+      {% if entry_point_key %}
+        {% assign entry = manifest[entry_point_key] %}
+        {% for css_file in entry.css %}
+          <link rel="stylesheet" href="/{{ css_file }}" />
+        {% endfor %}
+      {% endif %}
+    {% endif %}
+  <!-- preload-links -->
   </head>
+
   <body>
     {% block %}
     {% endblock %}
-    {% render 'vite-body-script'
-      , entry_point_key: entry_point_key %}
+    {% if prod %}
+      {% assign entry = manifest[entry_point_key] %}
+      {% if entry.file %}
+        <script type="module" src="/{{ entry.file }}"></script>
+      {% endif %}
+    {% else %}
+      <script type="module" src="/client/{{ entry_point_key }}"></script>
+    {% endif %}
   </body>
 </html>

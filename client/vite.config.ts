@@ -12,27 +12,23 @@ export default defineConfig({
     // Output to a 'dist' folder OUTSIDE the client folder, at the project root level
     outDir: "../dist",
     emptyOutDir: true, // Clear the output directory before building
-
     rollupOptions: {
       input: {
-        // Storefront Island Hydrator Client Entry
-        client: resolve(__dirname, "src/entry-client.ts"),
-        // Admin SPA Client Entry
-        admin: resolve(__dirname, "src/entry-admin.ts"),
-        // Common CSS file
-        css: resolve(__dirname, "src/assets/main.css"),
+        // Island Hydrator Client Entry
+        "entry-client": resolve(__dirname, "src/entry-client.ts"),
       },
       output: {
         // Configure output paths to keep different bundles organized
         entryFileNames: (chunkInfo) => {
-          // Prevent hashing for entry-server file
+          // Prevent hashing of entry-server file
           if (chunkInfo.name === "entry-server") {
             return "[name].js";
           }
-          return "[name]/[name]-[hash].js";
+
+          return "[name]-[hash].js";
         },
-        chunkFileNames: "[name]/[name]-[hash].js",
-        assetFileNames: "[name]/[name]-[hash].[ext]",
+        chunkFileNames: "[name]-[hash].js",
+        assetFileNames: "[name]-[hash].[ext]",
       },
     },
   },

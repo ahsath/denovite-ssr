@@ -1,5 +1,7 @@
 import { createApp, createSSRApp } from "vue";
 import { componentsMap } from "./main.ts";
+import "./assets/css/main.css";
+import "./assets/css/HelloWorld.css";
 
 async function hydrate() {
   // Find all elements in the DOM marked as components

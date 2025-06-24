@@ -2,28 +2,28 @@
   "tasks": {
     "server:dev": "NODE_ENV=development deno run -A server/server.ts",
     "server:prod": "NODE_ENV=production deno run -A server/server.ts",
-    "build:client": "deno run -A npm:vite@^6.3.3 build --config client/vite.config.ts --manifest",
+    "build:client": "deno run -A npm:vite build --config client/vite.config.ts --manifest --ssrManifest",
     "build:server": {
-      "description": "Build the server-side code",
-      "command": "deno run -A npm:vite@^6.3.3 build --ssr src/entry-server.ts --outDir ../dist/server --config client/vite.config.ts",
+      "description": "Build server-side code",
+      "command": "deno run -A npm:vite build --ssr src/entry-server.ts --outDir ../dist/entry-server --config client/vite.config.ts",
       "dependencies": ["build:client"]
     }
   },
   "imports": {
-    "@std/path": "jsr:@std/path@^1.0.9",
-    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.6",
-    "@types/express": "npm:@types/express@^5.0.1",
+    "@std/path": "jsr:@std/path@^1.1.0",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.10",
+    "@types/express": "npm:@types/express@^5.0.3",
     "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^5.2.4",
     "@vue/tsconfig": "npm:@vue/tsconfig@^0.7.0",
     "express": "npm:express@^5.1.0",
-    "tailwindcss": "npm:tailwindcss@^4.1.6",
+    "tailwindcss": "npm:tailwindcss@^4.1.10",
     "vite": "npm:vite@^6.3.5",
-    "vite-plugin-vue-devtools": "npm:vite-plugin-vue-devtools@^7.7.6",
-    "vue": "npm:vue@^3.5.13",
+    "vite-plugin-vue-devtools": "npm:vite-plugin-vue-devtools@^7.7.7",
+    "vue": "npm:vue@^3.5.17",
     "vue-tsc": "npm:vue-tsc@^2.2.10",
     "path": "node:path",
-    "@vue/server-renderer": "npm:@vue/server-renderer@^3.5.13",
-    "liquidjs": "npm:liquidjs@^10.21.0"
+    "@vue/server-renderer": "npm:@vue/server-renderer@^3.5.17",
+    "liquidjs": "npm:liquidjs@^10.21.1"
   },
   "nodeModulesDir": "auto",
   "compilerOptions": {

@@ -5,9 +5,10 @@ WORKDIR /app
 COPY deno.json deno.lock .
 COPY client ./client
 COPY server ./server
+COPY public ./public
 ENV DENO_DIR=./.deno_cache
 RUN --mount=type=cache,target=/app/.deno_cache \
-    deno install
+    deno install --allow-scripts
 
 # Build the development image
 FROM base AS dev

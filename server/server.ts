@@ -10,9 +10,14 @@ const __dirname = dirname(fromFileUrl(import.meta.url));
 const root = resolve(__dirname, "..");
 let vite: ViteDevServer;
 let render: Render;
-let manifest = prod
-  ? JSON.parse(Deno.readTextFileSync(resolve(root, "dist/.vite/manifest.json")))
-  : undefined;
+
+function loadManifest(filename: string) {
+  if (!prod) return {};
+  const filePath = resolve(root, filename);
+  return JSON.parse(Deno.readTextFileSync(filePath));
+}
+
+const ssrManifest = loadManifest("dist/.vite/ssr-manifest.json");
 
 const liquid = new Liquid({
   extname: ".liquid",
@@ -22,24 +27,18 @@ const liquid = new Liquid({
   cache: prod,
   globals: {
     prod,
-    manifest,
+    manifest: loadManifest("dist/.vite/manifest.json"),
   },
 });
 
 const app = express();
 app.engine("liquid", liquid.express());
-const viewPaths = [
-  "views/pages",
-  "views/pages/store",
-  "views/layouts",
-  "views/partials",
-];
+const viewPaths = ["views/pages", "views/layouts", "views/partials"];
 app.set(
   "views",
   viewPaths.map((viewPath) => resolve(__dirname, viewPath))
 );
 app.set("view engine", "liquid");
-// app.use(express.static(resolve(__dirname, "public")));
 
 if (!prod) {
   vite = await createViteServer({
@@ -62,32 +61,24 @@ if (!prod) {
 
   app.use(vite.middlewares);
 } else {
-  const module = await import(resolve(root, "dist/server/entry-server.js"));
+  const module = await import(
+    resolve(root, "dist/entry-server/entry-server.js")
+  );
   render = module.render;
-
-  try {
-    const manifestPath = resolve(root, "dist/.vite/manifest.json");
-    manifest = JSON.parse(await Deno.readTextFile(manifestPath));
-    console.log("Loaded manifest.json for production build");
-  } catch (error) {
-    console.error("Failed to load manifest.json:", error);
-  }
 
   app.use(express.static(resolve(root, "dist")));
 }
 
-// Home page route
+app.use(express.static(resolve(root, "public")));
+
 app.get("/", async (_req, res, next) => {
   try {
-    const {
-      html,
-      ctx: { modules },
-    } = await render({
-      componentName: "TestIsland",
-      props: { islandId: 789, otherData: "..." },
+    const { html: App, preloadLinks } = await render({
+      componentName: "App",
+      ssrManifest,
     });
 
-    res.render("index", { html, modules }, async (err, html) => {
+    res.render("index", { App }, async (err, html) => {
       if (err) {
         console.error("Liquid rendering error:", err);
         res.status(500).send("Error rendering home page");
@@ -97,27 +88,7 @@ app.get("/", async (_req, res, next) => {
         html = await vite.transformIndexHtml(_req.originalUrl, html);
       }
 
-      res.status(200).set({ "Content-Type": "text/html" }).end(html);
-    });
-  } catch (e) {
-    if (e instanceof Error) {
-      vite.ssrFixStacktrace(e);
-    }
-    next(e);
-  }
-});
-
-// Admin SPA route
-app.get("/admin", (req, res, next) => {
-  try {
-    res.render("admin", {}, async (err, html) => {
-      if (err) {
-        res.status(500).send("Error rendering admin page");
-      }
-
-      if (!prod) {
-        html = await vite.transformIndexHtml(req.originalUrl, html);
-      }
+      html = html.replace("<!-- preload-links -->", preloadLinks);
 
       res.status(200).set({ "Content-Type": "text/html" }).end(html);
     });
