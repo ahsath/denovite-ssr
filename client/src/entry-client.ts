@@ -46,15 +46,29 @@ async function hydrate() {
 
       app.mount(component);
 
-      console.log(
-        `[Hydrator] Hydrated ${
-          isClientOnly ? "client-only" : "SSR"
-        } component: ${componentName}`,
-        {
-          props: propsData,
-          elementId: component.id,
+      // Only print hydration info in development mode
+      if (import.meta.env?.MODE === "development") {
+        const type = isClientOnly ? "Client-Only" : "SSR";
+        const typeStyle = isClientOnly
+          ? "color: #ffb86c; background: #282a36; font-weight: bold; padding: 2px 6px; border-radius: 3px;"
+          : "color: #8be9fd; background: #282a36; font-weight: bold; padding: 2px 6px; border-radius: 3px;";
+        const idInfo = component.id ? ` (id: #${component.id})` : "";
+        console.log(
+          "%c[Hydrator]%c Hydrated %c%s%c component: %c%s%c%s",
+          "color: #6272a4; font-weight: normal;",
+          "color: #50fa7b; font-weight: bold;",
+          typeStyle,
+          type,
+          "color: inherit; font-weight: normal;",
+          "color: #f1fa8c; font-weight: bold;",
+          componentName,
+          "color: #44475a; font-style: italic;",
+          idInfo
+        );
+        if (Object.keys(propsData).length > 0) {
+          console.log("%c[Hydrator]   props:", "color: #6272a4;", propsData);
         }
-      );
+      }
     } catch (error) {
       console.error(
         `[Hydrator] Error hydrating component "${componentName}":`,
