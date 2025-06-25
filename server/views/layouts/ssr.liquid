@@ -6,12 +6,10 @@
     <title>{{ title | default: "SSR" }}</title>
     {% assign entry_point_key = 'src/entry-client.ts' %}
     {% if prod %}
-      {% if entry_point_key %}
-        {% assign entry = manifest[entry_point_key] %}
-        {% for css_file in entry.css %}
-          <link rel="stylesheet" href="/{{ css_file }}" />
-        {% endfor %}
-      {% endif %}
+      {% assign entry = manifest[entry_point_key] %}
+      {% for css_file in entry.css %}
+        <link rel="stylesheet" href="/{{ css_file }}" />
+      {% endfor %}
     {% endif %}
   <!-- preload-links -->
   </head>
@@ -20,7 +18,6 @@
     {% block %}
     {% endblock %}
     {% if prod %}
-      {% assign entry = manifest[entry_point_key] %}
       {% if entry.file %}
         <script type="module" src="/{{ entry.file }}"></script>
       {% endif %}
