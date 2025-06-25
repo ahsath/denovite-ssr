@@ -39,6 +39,6 @@ jobs:
         with:
           project: "denovite-ssr"
           entrypoint: "server/server.ts"
-          root: "/"
+          root: ""
           
           
