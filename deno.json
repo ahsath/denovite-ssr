@@ -10,17 +10,17 @@
     }
   },
   "imports": {
-    "@std/path": "jsr:@std/path@^1.1.0",
-    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.10",
+    "@std/path": "jsr:@std/path@^1.1.1",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.11",
     "@types/express": "npm:@types/express@^5.0.3",
-    "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^5.2.4",
+    "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.0",
     "@vue/tsconfig": "npm:@vue/tsconfig@^0.7.0",
     "express": "npm:express@^5.1.0",
-    "tailwindcss": "npm:tailwindcss@^4.1.10",
-    "vite": "npm:vite@^6.3.5",
+    "tailwindcss": "npm:tailwindcss@^4.1.11",
+    "vite": "npm:vite@^7.0.2",
     "vite-plugin-vue-devtools": "npm:vite-plugin-vue-devtools@^7.7.7",
     "vue": "npm:vue@^3.5.17",
-    "vue-tsc": "npm:vue-tsc@^2.2.10",
+    "vue-tsc": "npm:vue-tsc@^3.0.1",
     "path": "node:path",
     "@vue/server-renderer": "npm:@vue/server-renderer@^3.5.17",
     "liquidjs": "npm:liquidjs@^10.21.1"

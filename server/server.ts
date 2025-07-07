@@ -73,27 +73,33 @@ app.use(express.static(resolve(root, "public")));
 
 app.get("/", async (_req, res, next) => {
   try {
-    const { html: App, preloadLinks } = await render({
-      componentName: "App",
+    const { results, preloadLinks } = await render({
+      components: [{ componentName: "App" }],
       ssrManifest,
     });
 
-    res.render("index", { App }, async (err, html) => {
-      if (err) {
-        console.error("Liquid rendering error:", err);
-        res.status(500).send("Error rendering home page");
+    res.render(
+      "index",
+      {
+        App: results.App.html,
+      },
+      async (err, html) => {
+        if (err) {
+          console.error("Liquid rendering error:", err);
+          res.status(500).send("Error rendering home page");
+        }
+
+        if (!prod) {
+          html = await vite.transformIndexHtml(_req.originalUrl, html);
+        }
+
+        html = html.replace("<!-- preload-links -->", preloadLinks);
+
+        res.status(200).set({ "Content-Type": "text/html" }).end(html);
       }
-
-      if (!prod) {
-        html = await vite.transformIndexHtml(_req.originalUrl, html);
-      }
-
-      html = html.replace("<!-- preload-links -->", preloadLinks);
-
-      res.status(200).set({ "Content-Type": "text/html" }).end(html);
-    });
+    );
   } catch (e) {
-    if (e instanceof Error) {
+    if (e instanceof Error && vite && vite.ssrFixStacktrace) {
       vite.ssrFixStacktrace(e);
     }
     next(e);

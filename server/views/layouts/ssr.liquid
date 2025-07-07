@@ -7,6 +7,9 @@
     {% assign entry_point_key = 'src/entry-client.ts' %}
     {% if prod %}
       {% assign entry = manifest[entry_point_key] %}
+      {% if entry.file %}
+        <script type="module" src="/{{ entry.file }}"></script>
+      {% endif %}
       {% for css_file in entry.css %}
         <link rel="stylesheet" href="/{{ css_file }}" />
       {% endfor %}
@@ -17,12 +20,8 @@
   <body>
     {% block %}
     {% endblock %}
-    {% if prod %}
-      {% if entry.file %}
-        <script type="module" src="/{{ entry.file }}"></script>
-      {% endif %}
-    {% else %}
+    {% unless prod %}
       <script type="module" src="/client/{{ entry_point_key }}"></script>
-    {% endif %}
+    {% endunless %}
   </body>
 </html>
