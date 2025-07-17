@@ -17,7 +17,7 @@
     "@vue/tsconfig": "npm:@vue/tsconfig@^0.7.0",
     "express": "npm:express@^5.1.0",
     "tailwindcss": "npm:tailwindcss@^4.1.11",
-    "vite": "npm:vite@^7.0.2",
+    "vite": "npm:vite@^7.0.5",
     "vite-plugin-vue-devtools": "npm:vite-plugin-vue-devtools@^7.7.7",
     "vue": "npm:vue@^3.5.17",
     "vue-tsc": "npm:vue-tsc@^3.0.1",

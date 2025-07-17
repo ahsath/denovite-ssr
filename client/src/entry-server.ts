@@ -22,27 +22,14 @@ export type Render = (options: {
     props?: Props;
     isClientOnly?: boolean;
   }>;
-  ctx?: SSRCtx;
   ssrManifest: Record<string, string[]>;
 }) => Promise<{
   results: { [componentName: string]: RenderResult };
   preloadLinks: string;
 }>;
 
-// Function to render multiple components to HTML strings
-export async function render(options: {
-  components: Array<{
-    componentName: string;
-    props?: Props;
-    isClientOnly?: boolean;
-  }>;
-  ctx?: SSRCtx;
-  ssrManifest: Record<string, string[]>;
-}): Promise<{
-  results: { [componentName: string]: RenderResult };
-  preloadLinks: string;
-}> {
-  const { components, ctx: parentCtx, ssrManifest } = options;
+export const render: Render = async (options) => {
+  const { components, ssrManifest } = options;
   const results: { [componentName: string]: RenderResult } = {};
   const allModules = new Set<string>();
   let allPreloadLinks = "";
@@ -73,7 +60,6 @@ export async function render(options: {
         html: `<div data-component="${componentName}" data-props='${propsJsonString}' data-client-only="true"></div>`,
         ctx: { modules: new Set() },
       };
-
       continue;
     }
 
@@ -100,7 +86,7 @@ export async function render(options: {
   allPreloadLinks = renderPreloadLinks(allModules, ssrManifest);
 
   return { results, preloadLinks: allPreloadLinks };
-}
+};
 
 function renderPreloadLinks(
   modules: SSRCtx["modules"],
