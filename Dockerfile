@@ -2,7 +2,7 @@
 
 FROM denoland/deno:latest AS base
 WORKDIR /app
-COPY deno.json deno.lock .
+COPY deno.json deno.lock ./
 COPY client ./client
 COPY server ./server
 COPY public ./public
