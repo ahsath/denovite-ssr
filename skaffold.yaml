@@ -1,0 +1,40 @@
+# skaffold.yaml
+# This file tells Cloud Deploy (via Skaffold) how to deploy your Deno application.
+
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: cloud-run-application
+
+# This section defines the base manifests that are applied to all environments
+# by default, before any profile-specific modifications.
+manifests:
+  rawYaml:
+    - cloudrun-manifests/base.yaml # Always include your base Cloud Run definition
+
+# The 'deploy' section tells Skaffold which deployer to use.
+# For Cloud Run, you just specify 'cloudrun: {}'.
+# Cloud Deploy will provide the specific project and location based on the target.
+deploy:
+  cloudrun: {}
+
+# Define Skaffold profiles for your different deployment environments.
+# These profiles are activated by Cloud Deploy based on the 'profiles' field in your clouddeploy.yaml.
+profiles:
+  - name: staging # This profile name MUST match 'profiles: ["staging"]' in clouddeploy.yaml
+    # For staging, we explicitly set the service name using a JSON patch.
+    # This overrides the 'name' from cloudrun-base.yaml.
+    patches:
+      - op: replace
+        path: /metadata/name
+        value: zeyra-staging
+
+  - name: prod # This profile name MUST match 'profiles: ["prod"]' in clouddeploy.yaml
+    # For production, we load the base *and* the prod-specific resource overrides.
+    # manifests:
+    # rawYaml:
+    # - manifests/cloudrun-prod-resources.yaml # Merges with (and overrides) cloudrun-base.yaml
+    patches:
+      - op: replace
+        path: /metadata/name
+        value: zeyra-prod

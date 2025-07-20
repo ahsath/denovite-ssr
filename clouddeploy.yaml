@@ -1,0 +1,38 @@
+# Delivery pipeline config
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: zeyra-webapp
+description: "Delivery pipeline for Zeyra web application across staging, and production environments"
+serialPipeline:
+  stages:
+    - targetId: staging-cloud-run-target
+      profiles: ["staging"]
+      strategy:
+        standard:
+          verify: false
+    - targetId: prod-cloud-run-target
+      profiles: ["prod"]
+      strategy:
+        standard:
+          verify: true
+
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: staging-cloud-run-target
+description: "Target for staging environment of Zeyra web application"
+requireApproval: false
+run:
+  location: projects/zeyra-466314/locations/us-east1
+
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: prod-cloud-run-target
+description: "Target for production environment of Zeyra web application"
+requireApproval: true
+run:
+  location: projects/zeyra-466314/locations/us-east1
