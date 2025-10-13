@@ -68,6 +68,16 @@ export const render: Render = async (options) => {
       const app = createSSRApp(Component, props);
       const innerHtml = await renderToString(app, ctx);
 
+      if (ctx.teleports) {
+        for (const key in ctx.teleports) {
+          const teleportHtml = ctx.teleports[key];
+          const cleanedHtml = teleportHtml
+            .replace(/<!--teleport start anchor-->/g, "")
+            .replace(/<!--teleport anchor-->/g, "");
+          ctx.teleports[key] = cleanedHtml;
+        }
+      }
+
       results[componentName] = {
         html: `<div data-component="${componentName}" data-props='${propsJsonString}'>${innerHtml}</div>`,
         ctx,

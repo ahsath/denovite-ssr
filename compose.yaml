@@ -8,11 +8,17 @@ services:
         - action: sync
           path: client
           target: /app/client
-        - action: sync+restart
+        - action: sync
           path: server
           target: /app/server
+        - action: sync
+          path: public
+          target: /app/public
         - action: rebuild
-          path: package.json
+          path: deno.json
+        - action: sync+restart
+          path: deno.lock
+          target: /app/deno.lock
     ports:
       - 8080:8080
       - 24678:24678

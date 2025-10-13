@@ -32,8 +32,12 @@ const liquid = new Liquid({
 });
 
 const app = express();
+
 app.engine("liquid", liquid.express());
+app.use(express.static(resolve(root, "public")));
+
 const viewPaths = ["views/pages", "views/layouts", "views/partials"];
+
 app.set(
   "views",
   viewPaths.map((viewPath) => resolve(__dirname, viewPath))
@@ -68,8 +72,6 @@ if (!prod) {
 
   app.use(express.static(resolve(root, "dist")));
 }
-
-app.use(express.static(resolve(root, "public")));
 
 app.get("/", async (_req, res, next) => {
   try {
